@@ -1,0 +1,4 @@
+[submodule "3rdparty/memphis"]
+	path = 3rdparty/memphis
+	url = https://github.com/freayd/memphis.git
+	branch = qt
