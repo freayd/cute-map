@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
     QDir memphisDir(MEMPHIS_ROOT);
     QProcess tileServer;
-    tileServer.setProcessChannelMode(QProcess::ForwardedChannels);
+    // tileServer.setProcessChannelMode(QProcess::ForwardedChannels);
     tileServer.setWorkingDirectory(memphisDir.filePath("demos"));
     tileServer.start(memphisDir.filePath("demos/tile-server"),
                      QStringList() << "--no-daemon" << "--port=8080");
