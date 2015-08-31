@@ -1,12 +1,18 @@
 TEMPLATE = app
 
-QT += qml quick widgets location
+QT += qml quick widgets location network
 
-SOURCES += main.cpp
+HEADERS += \
+    downloadmanager.h
+
+SOURCES += main.cpp \
+    downloadmanager.cpp
 
 RESOURCES += qml.qrc
 
 # Default rules for deployment.
 include(deployment.pri)
 
-DEFINES += MEMPHIS_ROOT=\"\\\"$$clean_path($${_PRO_FILE_PWD_}/3rdparty/memphis)\\\"\"
+DEFINES += \
+    CUTE_MAP_ROOT=\"\\\"$${_PRO_FILE_PWD_}\\\"\" \
+    MEMPHIS_ROOT=\"\\\"$${_PRO_FILE_PWD_}/3rdparty/memphis\\\"\"

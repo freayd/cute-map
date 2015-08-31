@@ -4,6 +4,8 @@
 #include <QQmlApplicationEngine>
 #include <QStringList>
 
+#include "downloadmanager.h"
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -17,6 +19,11 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+    DownloadManager downloadManager;
+    downloadManager.append(QStringLiteral("http://download.geofabrik.de/europe/liechtenstein-latest.osm.bz2"));
+    downloadManager.append(QStringLiteral("http://download.geofabrik.de/europe/liechtenstein-latest.osm.pbf"));
+    downloadManager.append(QStringLiteral("http://download.geofabrik.de/europe/liechtenstein-latest.shp.zip"));
 
     return app.exec();
 }
