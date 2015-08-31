@@ -29,12 +29,12 @@ void DownloadManager::downloadNext()
 
     QUrl url = m_queue.dequeue();
     m_output.setFileName(m_outputDir.filePath(url.fileName()));
-    if (m_output.exists() && m_output.size() > 0) {
-        return downloadNext(); // Already downloaded
+    if (m_output.exists() && m_output.size() > 0) { // Already downloaded
+        return QTimer::singleShot(0, this, SLOT(downloadNext()));
     }
     if (!m_output.open(QIODevice::WriteOnly)) {
         qWarning("Unable to write file '%s'.", qUtf8Printable(QFileInfo(m_output).fileName()));
-        return downloadNext();
+        return QTimer::singleShot(0, this, SLOT(downloadNext()));
     }
 
     m_reply = m_networkManager->get(QNetworkRequest(url));
