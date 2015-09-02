@@ -2,3 +2,6 @@
 	path = 3rdparty/memphis
 	url = https://github.com/freayd/memphis.git
 	branch = qt
+[submodule "3rdparty/p7zip"]
+	path = 3rdparty/p7zip
+	url = https://github.com/freayd/p7zip.git
