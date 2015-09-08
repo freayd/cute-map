@@ -33,7 +33,7 @@ void DownloadManager::downloadNext()
         return QTimer::singleShot(0, this, SLOT(downloadNext()));
     }
     if (!m_output.open(QIODevice::WriteOnly)) {
-        qWarning("Unable to write file '%s'.", qUtf8Printable(QFileInfo(m_output).fileName()));
+        qWarning("Unable to write file '%s'.", qUtf8Printable(m_output.fileName()));
         return QTimer::singleShot(0, this, SLOT(downloadNext()));
     }
 
