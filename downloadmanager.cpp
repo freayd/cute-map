@@ -4,6 +4,8 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QRegularExpression>
+#include <QStringList>
 #include <QTimer>
 
 DownloadManager::DownloadManager(QObject *parent)
@@ -41,7 +43,7 @@ void DownloadManager::downloadNext()
     connect(m_reply, SIGNAL(downloadProgress(qint64,qint64)),
             SLOT(progress(qint64,qint64)));
     connect(m_reply, SIGNAL(readyRead()), SLOT(write()));
-    connect(m_reply, SIGNAL(finished()), SLOT(finished()));
+    connect(m_reply, SIGNAL(finished()), SLOT(downloaded()));
     qDebug("Downloading '%s'...", qUtf8Printable(QFileInfo(m_output).fileName()));
 }
 
@@ -57,20 +59,63 @@ void DownloadManager::write()
     m_output.write(m_reply->readAll());
 }
 
-void DownloadManager::finished()
+void DownloadManager::downloaded()
 {
     m_output.close();
+    m_reply->deleteLater();
 
     if (m_reply->error() != QNetworkReply::NoError) {
         qWarning("Error while downloading file '%s': '%s'.",
                  qUtf8Printable(QFileInfo(m_output).fileName()),
                  qUtf8Printable(m_reply->errorString()));
         m_output.remove();
+
+        return QTimer::singleShot(0, this, SLOT(downloadNext()));
     }
-    else {
-        qDebug("Download finish '%s'", qUtf8Printable(QFileInfo(m_output).fileName()));
+    qDebug("Download finished '%s'", qUtf8Printable(QFileInfo(m_output).fileName()));
+
+    QString extension = QFileInfo(m_output).completeSuffix();
+    if (!(QStringList() << "osm.bz2" << "shp.zip").contains(extension))
+        return QTimer::singleShot(0, this, SLOT(downloadNext()));
+
+    qDebug("Extracting '%s'...", qUtf8Printable(QFileInfo(m_output).fileName()));
+    QString extractPath = m_outputDir.path();
+    if (extension == "shp.zip")
+        extractPath = m_output.fileName().remove(QRegularExpression(".zip$"));
+    m_extractionProcess = new QProcess(this);
+    connect(m_extractionProcess, SIGNAL(finished(int)),
+            SLOT(extracted(int)));
+    connect(m_extractionProcess, SIGNAL(error(QProcess::ProcessError)),
+            SLOT(extractionError(QProcess::ProcessError)));
+    // m_extractProcess->setProcessChannelMode(QProcess::ForwardedChannels);
+    m_extractionProcess->start(QDir(P7ZIP_ROOT).filePath("bin/7z"),
+                               QStringList() << "x"
+                                             << QString("-o%1").arg(extractPath)
+                                             << m_output.fileName());
+}
+
+void DownloadManager::extracted(int exitCode)
+{
+    if (exitCode == QProcess::NormalExit) {
+        qDebug("Extraction finished '%s'", qUtf8Printable(QFileInfo(m_output).fileName()));
+    } else {
+        qWarning("Error while extracting file '%s': exit code %d.",
+                 qUtf8Printable(QFileInfo(m_output).fileName()),
+                 exitCode);
+        m_output.remove();
     }
 
-    m_reply->deleteLater();
-    downloadNext();
+    m_extractionProcess->deleteLater();
+    return QTimer::singleShot(0, this, SLOT(downloadNext()));
+}
+
+void DownloadManager::extractionError(QProcess::ProcessError /*error*/)
+{
+    qWarning("Error while extracting file '%s': %s.",
+             qUtf8Printable(QFileInfo(m_output).fileName()),
+             qUtf8Printable(m_extractionProcess->errorString()));
+    m_output.remove();
+
+    m_extractionProcess->deleteLater();
+    return QTimer::singleShot(0, this, SLOT(downloadNext()));
 }

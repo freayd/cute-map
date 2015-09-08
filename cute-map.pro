@@ -15,4 +15,5 @@ include(deployment.pri)
 
 DEFINES += \
     CUTE_MAP_ROOT=\"\\\"$${_PRO_FILE_PWD_}\\\"\" \
-    MEMPHIS_ROOT=\"\\\"$${_PRO_FILE_PWD_}/3rdparty/memphis\\\"\"
+    MEMPHIS_ROOT=\"\\\"$${_PRO_FILE_PWD_}/3rdparty/memphis\\\"\" \
+    P7ZIP_ROOT=\"\\\"$${_PRO_FILE_PWD_}/3rdparty/p7zip\\\"\"
