@@ -8,6 +8,7 @@
 #include <QProcess>
 #include <QQueue>
 #include <QUrl>
+#include <QVariant>
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -21,9 +22,13 @@ public:
 
     void append(const QUrl &url);
 
+signals:
+    void progress(const QVariant &text, const QVariant &processed, const QVariant &total);
+    void finished();
+
 private slots:
     void downloadNext();
-    void progress(qint64 received, qint64 total);
+    void downloadProgress(qint64 received, qint64 total);
     void write();
     void downloaded();
     void extracted(int exitCode);

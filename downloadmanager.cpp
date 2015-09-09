@@ -26,8 +26,10 @@ void DownloadManager::append(const QUrl &url)
 
 void DownloadManager::downloadNext()
 {
-    if (m_queue.isEmpty())
+    if (m_queue.isEmpty()) {
+        emit finished();
         return;
+    }
 
     QUrl url = m_queue.dequeue();
     m_output.setFileName(m_outputDir.filePath(url.fileName()));
@@ -39,19 +41,19 @@ void DownloadManager::downloadNext()
         return QTimer::singleShot(0, this, SLOT(downloadNext()));
     }
 
+    emit progress(QString("Downloading %1").arg(QFileInfo(m_output).fileName()), 0, -1);
     m_reply = m_networkManager->get(QNetworkRequest(url));
     connect(m_reply, SIGNAL(downloadProgress(qint64,qint64)),
-            SLOT(progress(qint64,qint64)));
+            SLOT(downloadProgress(qint64,qint64)));
     connect(m_reply, SIGNAL(readyRead()), SLOT(write()));
     connect(m_reply, SIGNAL(finished()), SLOT(downloaded()));
-    qDebug("Downloading '%s'...", qUtf8Printable(QFileInfo(m_output).fileName()));
 }
 
-void DownloadManager::progress(qint64 received, qint64 total)
+void DownloadManager::downloadProgress(qint64 received, qint64 total)
 {
-    qDebug("%s / %s",
-           QString::number(received).toLocal8Bit().constData(),
-           QString::number(total).toLocal8Bit().constData());
+    emit progress(QString("Downloading %1").arg(QFileInfo(m_output).fileName()),
+                  received,
+                  total);
 }
 
 void DownloadManager::write()
@@ -72,13 +74,13 @@ void DownloadManager::downloaded()
 
         return QTimer::singleShot(0, this, SLOT(downloadNext()));
     }
-    qDebug("Download finished '%s'", qUtf8Printable(QFileInfo(m_output).fileName()));
+    emit progress(QString("Downloaded %1").arg(QFileInfo(m_output).fileName()), 1, 1);
 
     QString extension = QFileInfo(m_output).completeSuffix();
     if (!(QStringList() << "osm.bz2" << "shp.zip").contains(extension))
         return QTimer::singleShot(0, this, SLOT(downloadNext()));
 
-    qDebug("Extracting '%s'...", qUtf8Printable(QFileInfo(m_output).fileName()));
+    emit progress(QString("Extracting %1").arg(QFileInfo(m_output).fileName()), 0, -1);
     QString extractPath = m_outputDir.path();
     if (extension == "shp.zip")
         extractPath = m_output.fileName().remove(QRegularExpression(".zip$"));
@@ -97,7 +99,7 @@ void DownloadManager::downloaded()
 void DownloadManager::extracted(int exitCode)
 {
     if (exitCode == QProcess::NormalExit) {
-        qDebug("Extraction finished '%s'", qUtf8Printable(QFileInfo(m_output).fileName()));
+        emit progress(QString("Extracted %1").arg(QFileInfo(m_output).fileName()), 1, 1);
     } else {
         qWarning("Error while extracting file '%s': exit code %d.",
                  qUtf8Printable(QFileInfo(m_output).fileName()),

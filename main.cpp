@@ -24,6 +24,10 @@ int main(int argc, char *argv[])
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     DownloadManager downloadManager;
+    QObject::connect(&downloadManager, SIGNAL(progress(QVariant, QVariant, QVariant)),
+                     engine.rootObjects().first(), SLOT(updateStatus(QVariant, QVariant, QVariant)));
+    QObject::connect(&downloadManager, SIGNAL(finished()),
+                     engine.rootObjects().first(), SLOT(showMap()));
     downloadManager.append(QStringLiteral("http://download.geofabrik.de/europe/liechtenstein-latest.osm.bz2"));
     downloadManager.append(QStringLiteral("http://download.geofabrik.de/europe/liechtenstein-latest.osm.pbf"));
     downloadManager.append(QStringLiteral("http://download.geofabrik.de/europe/liechtenstein-latest.shp.zip"));
