@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QProcess>
 #include <QQueue>
+#include <QString>
 #include <QUrl>
 #include <QVariant>
 
@@ -35,12 +36,16 @@ private slots:
     void extractionError(QProcess::ProcessError);
 
 private:
+    void emitProgress(const QString &text, qint64 processed, qint64 total);
+
     QNetworkAccessManager *m_networkManager;
     QNetworkReply *m_reply;
     QProcess *m_extractionProcess;
     QQueue<QUrl> m_queue;
     const QDir m_outputDir;
     QFile m_output;
+    unsigned int m_downloadCount;
+    unsigned int m_totalCount;
 };
 
 #endif // DOWNLOADMANAGER_H
