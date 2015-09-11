@@ -3,9 +3,11 @@ TEMPLATE = app
 QT += qml quick widgets location network
 
 HEADERS += \
+    cutemap.h \
     downloadmanager.h
 
 SOURCES += main.cpp \
+    cutemap.cpp \
     downloadmanager.cpp
 
 RESOURCES += qml.qrc
