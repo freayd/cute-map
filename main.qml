@@ -43,8 +43,14 @@ ApplicationWindow {
         }
     }
 
+    Timer {
+        id: hideStatusBarTimer
+        interval: 1000
+        onTriggered: statusBar.visible = false
+    }
+
     function showMap() {
-        statusBar.visible = false
+        hideStatusBarTimer.start()
         map.visible = true
     }
 
