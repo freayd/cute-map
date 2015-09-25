@@ -15,7 +15,6 @@ DownloadManager::DownloadManager(QObject *parent)
       m_downloadCount(0),
       m_totalCount(0)
 {
-    QDir(CUTE_MAP_ROOT).mkdir("data");
 }
 
 void DownloadManager::append(const QUrl &url)

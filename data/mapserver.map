@@ -1,0 +1,35 @@
+MAP
+    STATUS ON
+    UNITS DD
+    INCLUDE "mapserver-path.map"
+    PROJECTION
+        "proj=latlong"
+        "ellps=WGS84"
+        "datum=WGS84"
+    END
+    OUTPUTFORMAT
+        DRIVER AGG/PNG
+    END
+
+    LAYER
+        DATA "buildings"
+        TYPE POLYGON
+        STATUS DEFAULT
+        CLASS
+            STYLE
+                COLOR 217 208 201
+                OUTLINECOLOR 193 179 164
+            END
+        END
+    END # LAYER
+    LAYER
+        DATA "roads"
+        TYPE LINE
+        STATUS DEFAULT
+        CLASS
+            STYLE
+                COLOR 128 128 128
+            END
+        END
+    END # LAYER
+END # MAP

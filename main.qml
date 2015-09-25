@@ -49,8 +49,11 @@ ApplicationWindow {
         onTriggered: statusBar.visible = false
     }
 
-    function showMap() {
+    function showMap(url) {
         hideStatusBarTimer.start()
+
+        map.plugin = Qt.createQmlObject('import QtLocation 5.5; Plugin {name: "osm"; PluginParameter {name: "osm.mapping.host"; value: "' + url + '"} }', map)
+        map.activeMapType = map.supportedMapTypes[7] // FIXME: Remove dirty hard-coded index
         map.visible = true
     }
 
@@ -65,11 +68,6 @@ ApplicationWindow {
         zoomLevel: 15
 
         anchors.fill: parent
-        activeMapType: supportedMapTypes[7] // FIXME: Remove dirty hard-coded index
-        plugin: Plugin {
-            name: "osm"
-            PluginParameter { name: "osm.mapping.host"; value: "http://localhost:8080/" }
-        }
     }
 
 }

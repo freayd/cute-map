@@ -1,3 +1,8 @@
 *.pro.user
 build-*
-/data
+/data/*.osm
+/data/*.osm.bz2
+/data/*.osm.pbf
+/data/*.shp
+/data/*.shp.zip
+/data/mapserver-path.map

@@ -5,3 +5,6 @@
 [submodule "3rdparty/p7zip"]
 	path = 3rdparty/p7zip
 	url = https://github.com/freayd/p7zip.git
+[submodule "3rdparty/mapserver"]
+	path = 3rdparty/mapserver
+	url = https://github.com/mapserver/mapserver.git

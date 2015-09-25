@@ -18,6 +18,7 @@ private slots:
 
 private:
     QQmlApplicationEngine *m_qmlEngine;
+    QObject *m_qmlRoot;
     DownloadManager *m_downloadManager;
 };
 
