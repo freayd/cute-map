@@ -88,7 +88,12 @@ ApplicationWindow {
 
         map = Qt.createQmlObject('import QtLocation 5.5; Map {}', appWindow);
         map.plugin = Qt.createQmlObject('import QtLocation 5.5; Plugin {name: "osm"; PluginParameter {name: "osm.mapping.host"; value: "' + url + '"} }', map)
-        map.activeMapType = map.supportedMapTypes[7] // FIXME: Remove dirty hard-coded index
+        for (var i = 0; i < map.supportedMapTypes.length; ++i) {
+            if (map.supportedMapTypes[i].style === MapType.CustomMap) {
+                map.activeMapType = map.supportedMapTypes[i]
+                break
+            }
+        }
         map.center = center
         map.zoomLevel = zoomLevel
         map.anchors.fill = map.parent
