@@ -11,6 +11,7 @@
 #include <QString>
 #include <QStringList>
 #include <QUrl>
+#include <QVariant>
 
 CuteMap::CuteMap(int &argc, char **argv)
     : QApplication(argc, argv),

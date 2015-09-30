@@ -7,12 +7,12 @@
 #include <QFile>
 #include <QProcess>
 #include <QQueue>
-#include <QString>
 #include <QUrl>
 #include <QVariant>
 
 class QNetworkAccessManager;
 class QNetworkReply;
+class QString;
 
 class DownloadManager : public QObject
 {
