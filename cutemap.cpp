@@ -25,9 +25,15 @@ CuteMap::CuteMap(int &argc, char **argv)
     connect(m_downloadManager, SIGNAL(progress(QVariant, QVariant, QVariant)),
             m_qmlRoot, SLOT(updateStatus(QVariant, QVariant, QVariant)));
     connect(m_downloadManager, SIGNAL(finished()), SLOT(initRenderer()));
-    m_downloadManager->append(QStringLiteral("http://download.geofabrik.de/europe/liechtenstein-latest.osm.bz2"));
-    m_downloadManager->append(QStringLiteral("http://download.geofabrik.de/europe/liechtenstein-latest.osm.pbf"));
-    m_downloadManager->append(QStringLiteral("http://download.geofabrik.de/europe/liechtenstein-latest.shp.zip"));
+
+    QStringList countries, extensions;
+    countries << "europe/liechtenstein" << "asia/south-korea";
+    extensions << "osm.bz2" << "osm.pbf" << "shp.zip";
+    for (int c = 0; c < countries.size(); ++c)
+        for (int e = 0; e < extensions.size(); ++e)
+            m_downloadManager->append(QString("http://download.geofabrik.de/%1-latest.%2")
+                                      .arg(countries.at(c))
+                                      .arg(extensions.at(e)));
 
     connect(m_qmlRoot, SIGNAL(rendererChanged(QString)), SLOT(setRenderer(QString)));
 }
