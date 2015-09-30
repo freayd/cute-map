@@ -3,11 +3,12 @@
 
 #include <QApplication>
 
+#include <QString>
+
 class DownloadManager;
 class TileRenderer;
 class QProcess;
 class QQmlApplicationEngine;
-class QString;
 
 class CuteMap : public QApplication
 {
@@ -17,13 +18,18 @@ public:
     CuteMap(int &argc, char **argv);
 
 private slots:
-    void initRenderer();
-    void setRenderer(const QString &name);
+    void setCountry(const QString &country);
+    void setRenderer(const QString &renderer);
+    void initMap();
 
 private:
+    void showMap();
+
     QQmlApplicationEngine *m_qmlEngine;
     QObject *m_qmlRoot;
     DownloadManager *m_downloadManager;
+    QString m_country;
+    QString m_renderer;
     TileRenderer *m_tileRenderer;
     QProcess *m_processRenderer;
 };

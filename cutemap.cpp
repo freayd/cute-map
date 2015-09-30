@@ -4,6 +4,7 @@
 #include "mapserverrenderer.h"
 
 #include <QDir>
+#include <QGeoCoordinate>
 #include <QMetaObject>
 #include <QProcess>
 #include <QQmlApplicationEngine>
@@ -25,7 +26,7 @@ CuteMap::CuteMap(int &argc, char **argv)
 
     connect(m_downloadManager, SIGNAL(progress(QVariant, QVariant, QVariant)),
             m_qmlRoot, SLOT(updateStatus(QVariant, QVariant, QVariant)));
-    connect(m_downloadManager, SIGNAL(finished()), SLOT(initRenderer()));
+    connect(m_downloadManager, SIGNAL(finished()), SLOT(initMap()));
 
     QStringList countries, extensions;
     countries << "europe/liechtenstein" << "asia/south-korea";
@@ -36,15 +37,38 @@ CuteMap::CuteMap(int &argc, char **argv)
                                       .arg(countries.at(c))
                                       .arg(extensions.at(e)));
 
+    connect(m_qmlRoot, SIGNAL(countryChanged(QString)), SLOT(setCountry(QString)));
     connect(m_qmlRoot, SIGNAL(rendererChanged(QString)), SLOT(setRenderer(QString)));
 }
 
-void CuteMap::initRenderer()
+void CuteMap::setCountry(const QString &country)
 {
-    setRenderer("Memphis");
+    QGeoCoordinate center;
+    if (country == QStringLiteral("Liechtenstein")) {
+        m_country = "liechtenstein";
+        center = QGeoCoordinate(47.141, 9.521);
+    } else if (country == QStringLiteral("South Korea")) {
+        m_country = "south-korea";
+        center = QGeoCoordinate(37.567, 126.978);
+    }
+    m_qmlRoot->setProperty("center", QVariant::fromValue(center));
+
+    showMap();
 }
 
-void CuteMap::setRenderer(const QString &name)
+void CuteMap::setRenderer(const QString &renderer)
+{
+    m_renderer = renderer;
+    showMap();
+}
+
+void CuteMap::initMap()
+{
+    m_renderer = "Memphis";
+    setCountry("Liechtenstein");
+}
+
+void CuteMap::showMap()
 {
     QDir(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + QLatin1String("/QtLocation/osm")).removeRecursively();
     if (m_tileRenderer) {
@@ -56,8 +80,8 @@ void CuteMap::setRenderer(const QString &name)
         m_processRenderer = 0;
     }
 
-    QString mapPath = QDir(CUTE_MAP_ROOT).filePath("data/liechtenstein-latest");
-    if (name == QStringLiteral("Memphis")) {
+    QString mapPath = QDir(CUTE_MAP_ROOT).filePath(QString("data/%1-latest").arg(m_country));
+    if (m_renderer == QStringLiteral("Memphis")) {
         QDir memphisDir(MEMPHIS_ROOT);
         m_processRenderer = new QProcess(this);
         // m_processRenderer->setProcessChannelMode(QProcess::ForwardedChannels);
@@ -68,11 +92,11 @@ void CuteMap::setRenderer(const QString &name)
                                                << QString("--map=%1").arg(mapPath + ".osm"));
 
         QMetaObject::invokeMethod(m_qmlRoot, "showMap", Q_ARG(QVariant, "http://localhost:8080/"));
-    } else if (name == QStringLiteral("MapServer")) {
+    } else if (m_renderer == QStringLiteral("MapServer")) {
         m_tileRenderer = new MapServerRenderer(mapPath + ".shp", this);
         connect(m_tileRenderer, SIGNAL(listening(QVariant)), m_qmlRoot, SLOT(showMap(QVariant)));
         m_tileRenderer->start();
     } else {
-        qWarning("Unknown renderer '%s'.", qUtf8Printable(name));
+        qWarning("Unknown renderer '%s'.", qUtf8Printable(m_renderer));
     }
 }

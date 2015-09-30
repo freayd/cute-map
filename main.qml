@@ -13,7 +13,9 @@ ApplicationWindow {
     visible: true
 
     property Map map
+    property variant center
 
+    signal countryChanged(string country);
     signal rendererChanged(string renderer);
 
     menuBar: MenuBar {
@@ -22,6 +24,24 @@ ApplicationWindow {
             MenuItem {
                 text: qsTr("E&xit")
                 onTriggered: Qt.quit();
+            }
+        }
+        Menu {
+            title: "Country"
+            ExclusiveGroup {
+                id: countryGroup
+                onCurrentChanged: appWindow.countryChanged(current.text)
+            }
+            MenuItem {
+                text: "Liechtenstein"
+                exclusiveGroup: countryGroup
+                checkable: true
+                checked: true
+            }
+            MenuItem {
+                text: "South Korea"
+                exclusiveGroup: countryGroup
+                checkable: true
             }
         }
         Menu {
@@ -75,16 +95,10 @@ ApplicationWindow {
     }
 
     function showMap(url) {
-        var center, zoomLevel
-        if (map) {
-            center = map.center
-            zoomLevel = map.zoomLevel
+        if (map)
             map.destroy()
-        } else {
+        else
             hideStatusBarTimer.start()
-            center = QtPositioning.coordinate(47.141, 9.521)
-            zoomLevel = 15
-        }
 
         map = Qt.createQmlObject('import QtLocation 5.5; Map {}', appWindow);
         map.plugin = Qt.createQmlObject('import QtLocation 5.5; Plugin {name: "osm"; PluginParameter {name: "osm.mapping.host"; value: "' + url + '"} }', map)
@@ -95,7 +109,7 @@ ApplicationWindow {
             }
         }
         map.center = center
-        map.zoomLevel = zoomLevel
+        map.zoomLevel = 15
         map.anchors.fill = map.parent
         map.visible = true
     }
