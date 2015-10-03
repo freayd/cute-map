@@ -70,7 +70,8 @@ void TileRenderer::run()
         }
 
         socket->disconnectFromHost();
-        socket->waitForDisconnected();
+        if (socket->state() != QAbstractSocket::UnconnectedState)
+            socket->waitForDisconnected();
         delete socket;
     }
 }
