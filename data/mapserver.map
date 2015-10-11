@@ -10,6 +10,7 @@ MAP
     OUTPUTFORMAT
         DRIVER AGG/PNG
     END
+    IMAGECOLOR 255 255 255
 
     LAYER
         DATA "buildings"
