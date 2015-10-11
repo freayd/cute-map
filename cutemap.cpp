@@ -80,9 +80,9 @@ void CuteMap::showMap()
         m_processRenderer = 0;
     }
 
-    QString mapPath = QDir(CUTE_MAP_ROOT).filePath(QString("data/%1-latest").arg(m_country));
+    QString mapPath = QDir(CUTEMAP_DIR).filePath(QString("data/%1-latest").arg(m_country));
     if (m_renderer == QStringLiteral("Memphis")) {
-        QDir memphisDir(MEMPHIS_ROOT);
+        QDir memphisDir(MEMPHIS_DIR);
         m_processRenderer = new QProcess(this);
         // m_processRenderer->setProcessChannelMode(QProcess::ForwardedChannels);
         m_processRenderer->setWorkingDirectory(memphisDir.filePath("demos"));

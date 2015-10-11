@@ -12,7 +12,7 @@
 DownloadManager::DownloadManager(QObject *parent)
     : QObject(parent),
       m_networkManager(new QNetworkAccessManager(this)),
-      m_outputDir(QDir(CUTE_MAP_ROOT).filePath("data")),
+      m_outputDir(QDir(CUTEMAP_DIR).filePath("data")),
       m_downloadCount(0),
       m_totalCount(0)
 {
@@ -92,7 +92,7 @@ void DownloadManager::downloaded()
     connect(m_extractionProcess, SIGNAL(error(QProcess::ProcessError)),
             SLOT(extractionError(QProcess::ProcessError)));
     // m_extractProcess->setProcessChannelMode(QProcess::ForwardedChannels);
-    m_extractionProcess->start(QDir(P7ZIP_ROOT).filePath("bin/7z"),
+    m_extractionProcess->start(QDir(P7ZIP_DIR).filePath("bin/7z"),
                                QStringList() << "x"
                                              << QString("-o%1").arg(extractPath)
                                              << m_output.fileName());
