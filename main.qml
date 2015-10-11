@@ -61,6 +61,11 @@ ApplicationWindow {
                 exclusiveGroup: rendererGroup
                 checkable: true
             }
+            MenuItem {
+                text: "Mapnik"
+                exclusiveGroup: rendererGroup
+                checkable: true
+            }
         }
     }
 

@@ -1,0 +1,13 @@
+<Map background-color="#ffffff" srs="+proj=latlong +ellps=WGS84 +datum=WGS84">
+    <Style name="buildings">
+        <Rule>
+            <PolygonSymbolizer fill="#d9d0c9" />
+            <LineSymbolizer stroke="#c1b3a4" />
+        </Rule>
+    </Style>
+    <Style name="roads">
+        <Rule>
+            <LineSymbolizer stroke="#808080" />
+        </Rule>
+    </Style>
+</Map>

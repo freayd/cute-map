@@ -18,8 +18,13 @@ signals:
     void listening(const QVariant &url);
 
 protected:
+    static inline double longitude(int x, int z);
+    static inline double latitude(int y, int z);
+
     void run() Q_DECL_OVERRIDE;
     virtual QByteArray render(int x, int y, int z) = 0;
 };
+
+#include "tilerenderer.hpp"
 
 #endif // TILERENDERER_H

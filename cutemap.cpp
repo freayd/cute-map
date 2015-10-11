@@ -2,6 +2,7 @@
 
 #include "downloadmanager.h"
 #include "mapserverrenderer.h"
+#include "mapnikrenderer.h"
 
 #include <QDir>
 #include <QGeoCoordinate>
@@ -94,9 +95,14 @@ void CuteMap::showMap()
         QMetaObject::invokeMethod(m_qmlRoot, "showMap", Q_ARG(QVariant, "http://localhost:8080/"));
     } else if (m_renderer == QStringLiteral("MapServer")) {
         m_tileRenderer = new MapServerRenderer(mapPath + ".shp", this);
-        connect(m_tileRenderer, SIGNAL(listening(QVariant)), m_qmlRoot, SLOT(showMap(QVariant)));
-        m_tileRenderer->start();
+    } else if (m_renderer == QStringLiteral("Mapnik")) {
+        m_tileRenderer = new MapnikRenderer(mapPath + ".shp", this);
     } else {
         qWarning("Unknown renderer '%s'.", qUtf8Printable(m_renderer));
+    }
+
+    if (m_tileRenderer) {
+        connect(m_tileRenderer, SIGNAL(listening(QVariant)), m_qmlRoot, SLOT(showMap(QVariant)));
+        m_tileRenderer->start();
     }
 }

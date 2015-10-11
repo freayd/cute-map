@@ -8,3 +8,6 @@
 [submodule "3rdparty/mapserver"]
 	path = 3rdparty/mapserver
 	url = https://github.com/mapserver/mapserver.git
+[submodule "3rdparty/mapnik"]
+	path = 3rdparty/mapnik
+	url = https://github.com/mapnik/mapnik.git
